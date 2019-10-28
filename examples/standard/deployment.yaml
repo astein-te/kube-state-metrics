@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/version: v1.8.0
   name: kube-state-metrics
-  namespace: kube-system
+  namespace: ops
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/version: v1.8.0
+        # app.kubernetes.io/version: v1.8.0
     spec:
       containers:
       - image: quay.io/coreos/kube-state-metrics:v1.8.0
@@ -26,6 +26,9 @@ spec:
           initialDelaySeconds: 5
           timeoutSeconds: 5
         name: kube-state-metrics
+        args:
+          - '--collectors=pods,replicationcontrollers,resourcequotas,nodes,persistentvolumes,poddisruptionbudgets,namespaces,services,certificatesigningrequests,daemonsets,endpoints,verticalpodautoscalers,configmaps,jobs,persistentvolumeclaims,ingresses,limitranges,replicasets,secrets,statefulsets,cronjobs,deployments,horizontalpodautoscalers,storageclasses'
+          - '--namespace=ops'
         ports:
         - containerPort: 8080
           name: http-metrics
@@ -37,6 +40,4 @@ spec:
             port: 8081
           initialDelaySeconds: 5
           timeoutSeconds: 5
-      nodeSelector:
-        kubernetes.io/os: linux
       serviceAccountName: kube-state-metrics
